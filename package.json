@@ -35,8 +35,5 @@
 	"type": "module",
 	"overrides": {
 		"prettier": "^3.0.0"
-	},
-	"dependencies": {
-		"svelte-icons": "^2.1.0"
 	}
 }
