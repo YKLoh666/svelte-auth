@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer components {
+	.header-button {
+		@apply rounded-md border border-transparent bg-black px-2 py-1 text-lg text-white transition-all hover:border-black hover:bg-transparent hover:text-black;
+	}
+
+	.form {
+		@apply container mx-auto my-12 w-5/12 rounded-lg border p-6 shadow-md;
+	}
+
 	.form-group {
 		@apply m-4 flex flex-col;
 	}
@@ -12,10 +20,14 @@
 	}
 
 	.form-group .form-control {
-		@apply block h-8 w-full rounded border border-gray-300 p-5 text-lg leading-6 text-neutral-800 transition-all focus:border-gray-500 focus:shadow-[0_0_10px_-2px_#0af7] focus:outline-none focus-visible:outline-none;
+		@apply block h-8 w-full rounded border border-gray-300 p-5 text-lg leading-6 text-neutral-800 outline-none transition-all focus:shadow-[0_0_10px_-2px_#0af7] focus-visible:outline-none;
 	}
 
 	.btn-primary {
 		@apply block w-fit rounded bg-blue-600 px-6 py-2 text-white transition-all hover:cursor-pointer hover:shadow-[0_0_20px_-2px_#0af7];
+	}
+
+	.form .error {
+		@apply rounded-md bg-red-100 p-4 text-justify leading-8 tracking-tight text-red-900;
 	}
 }

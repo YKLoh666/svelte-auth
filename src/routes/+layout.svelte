@@ -1,22 +1,24 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import '../app.css';
-	import { page } from '$app/stores';
+	import Header from './Header.svelte';
+	import { auth } from '$lib/firebase';
+	import { authStore } from '$lib/stores';
+	import { onAuthStateChanged } from 'firebase/auth';
+
+	onMount(() => {
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			authStore.update((curr) => {
+				return { ...curr, isLoading: false, currentUser: user };
+			});
+		});
+	});
 </script>
 
 <svelte:head>
 	<title>Svelte Auth APP</title>
 </svelte:head>
 
-<header
-	class="flex items-center justify-between bg-gray-200 px-8 py-4 text-center text-2xl shadow-lg"
->
-	<a href="/">Svelte Authentication APP</a>
-	<a
-		class="rounded-md border-[1px] border-transparent bg-black px-2 py-1 text-lg text-white transition-all hover:border-black hover:bg-transparent hover:text-black"
-		href={$page.url.pathname === '/login' ? '/register' : '/login'}
-	>
-		{$page.url.pathname === '/login' ? 'Sign Up' : 'Sign In'}
-	</a>
-</header>
+<Header />
 
 <slot />
