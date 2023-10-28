@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { authHandlers, authStore } from '$lib/stores';
 	import { goto } from '$app/navigation';
-	import { AuthErrorCodes } from 'firebase/auth';
 	import { onMount } from 'svelte';
 
 	$: {
 		let user = $authStore.currentUser;
-		if (user) goto('/');
+		if (!$authStore.isLoading && user) goto('/dashboard');
 	}
 
 	let email = '';
@@ -21,9 +20,17 @@
 	});
 
 	const handleSubmit = async (e: Event) => {
+		e.preventDefault();
+
 		try {
+			authStore.update((curr) => {
+				return { ...curr, isLoading: true };
+			});
 			await authHandlers.login(email, password);
 		} catch (err) {
+			authStore.update((curr) => {
+				return { ...curr, isLoading: false };
+			});
 			if (err && typeof err === 'object' && 'code' in err) {
 				switch (err.code) {
 					case 'auth/user-not-found':

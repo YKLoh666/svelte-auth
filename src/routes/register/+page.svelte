@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { db } from '$lib/firebase';
 	import { authHandlers, authStore } from '$lib/stores';
+	import { addDoc, collection } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 
 	$: {
 		let user = $authStore.currentUser;
-		if (user) goto('/');
+		if (!$authStore.isLoading && user) goto('/dashboard');
 	}
 
 	export let email = '';
@@ -32,9 +34,18 @@
 		}
 
 		try {
+			authStore.update((curr) => {
+				return { ...curr, isLoading: true };
+			});
 			const user = await authHandlers.signup(email, password);
-			console.log(user);
+
+			const docRef = await addDoc(collection(db, 'users'), {
+				email: user.email
+			});
 		} catch (err) {
+			authStore.update((curr) => {
+				return { ...curr, isLoading: false };
+			});
 			if (err && typeof err === 'object' && 'code' in err) {
 				switch (err.code) {
 					case 'auth/invalid-email':
@@ -57,6 +68,8 @@
 						errorMsg =
 							'Unexpected error occured, please try again in few minutes, or inquire with the website admin';
 				}
+			} else if (err instanceof Error) {
+				throw new Error(err.message);
 			}
 			return;
 		}
