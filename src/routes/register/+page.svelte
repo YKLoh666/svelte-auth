@@ -37,11 +37,7 @@
 			authStore.update((curr) => {
 				return { ...curr, isLoading: true };
 			});
-			const user = await authHandlers.signup(email, password);
-
-			const docRef = await addDoc(collection(db, 'users'), {
-				email: user.email
-			});
+			await authHandlers.signup(email, password);
 		} catch (err) {
 			authStore.update((curr) => {
 				return { ...curr, isLoading: false };

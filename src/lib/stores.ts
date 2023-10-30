@@ -8,7 +8,8 @@ import {
 	type User
 } from 'firebase/auth';
 import { writable } from 'svelte/store';
-import { auth } from './firebase';
+import { auth, db } from './firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface authStoreType {
 	isLoading: boolean;
@@ -22,7 +23,14 @@ export const authStore = writable<authStoreType>({
 
 export const authHandlers = {
 	signup: async (email: string, password: string): Promise<User> => {
-		return (await createUserWithEmailAndPassword(auth, email, password)).user;
+		const user = (await createUserWithEmailAndPassword(auth, email, password)).user;
+
+		const documentRef = doc(db, 'users', user.uid);
+
+		await setDoc(documentRef, {
+			email: user.email
+		});
+		return user;
 	},
 	login: async (email: string, password: string) => {
 		await signInWithEmailAndPassword(auth, email, password);

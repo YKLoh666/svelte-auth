@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { authStore } from '$lib/stores';
-	import { redirect } from '@sveltejs/kit';
+	import { onMount } from 'svelte';
 	// import type { PageData } from './$types';
 
-	$: {
-		if (!$authStore.isLoading && $authStore.currentUser) throw redirect(302, '/dashboard');
-		else throw redirect(302, '/login');
-	}
+	onMount(() => {
+		if (!$authStore.isLoading && $authStore.currentUser) goto('/dashboard');
+		else goto('/login');
+	});
 
 	// export let data: PageData;
 </script>
