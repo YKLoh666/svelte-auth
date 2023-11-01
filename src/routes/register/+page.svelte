@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { db } from '$lib/firebase';
-	import { authHandlers, authStore } from '$lib/stores';
-	import { addDoc, collection } from 'firebase/firestore';
+	import { authHandlers, user } from '$lib/firebase';
 	import { onMount } from 'svelte';
 
-	$: {
-		let user = $authStore.currentUser;
-		if (!$authStore.isLoading && user) goto('/dashboard');
-	}
+	$: if ($user) goto(`${$user.uid}/dashboard`);
 
 	export let email = '';
 	let password = '';
@@ -34,14 +29,8 @@
 		}
 
 		try {
-			authStore.update((curr) => {
-				return { ...curr, isLoading: true };
-			});
 			await authHandlers.signup(email, password);
 		} catch (err) {
-			authStore.update((curr) => {
-				return { ...curr, isLoading: false };
-			});
 			if (err && typeof err === 'object' && 'code' in err) {
 				switch (err.code) {
 					case 'auth/invalid-email':

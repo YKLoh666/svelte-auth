@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { authStore } from '$lib/stores';
+	import { user } from '$lib/firebase';
 	import { onMount } from 'svelte';
 	// import type { PageData } from './$types';
 
 	onMount(() => {
-		if (!$authStore.isLoading && $authStore.currentUser) goto('/dashboard');
+		if ($user) goto(`${$user.uid}/dashboard`);
 		else goto('/login');
 	});
 

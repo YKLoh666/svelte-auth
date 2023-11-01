@@ -1,9 +1,11 @@
 import { get } from 'svelte/store';
 import type { PageServerLoad } from './$types';
-import { authStore } from '$lib/stores';
+import { user } from '$lib/firebase';
 import { redirect } from '@sveltejs/kit';
+import type { User } from 'firebase/auth';
 
 export const load = (async () => {
-	if (!get(authStore).isLoading && get(authStore).currentUser) throw redirect(302, '/dashboard');
+	const userStatus: User | null = get(user);
+	if (userStatus) throw redirect(302, `/${userStatus.uid}/dashboard`);
 	return {};
 }) satisfies PageServerLoad;
